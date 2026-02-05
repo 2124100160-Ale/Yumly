@@ -28,11 +28,17 @@ Route::get('/dietas/listado', [DietaController::class, 'index']);
 // Administradores
 Route::get('/administradores/formulario', [AdministradorController::class, 'create']);
 Route::post('/administradores/guardar', [AdministradorController::class, 'store']);
+Route::get('/administradores/editar/{id}', [AdministradorController::class, 'edit']);
+Route::post('/administradores/actualizar/{id}', [AdministradorController::class, 'update']);
 
 // Usuarios
 Route::get('/usuarios/formulario', [UsuarioController::class, 'create']);
 Route::post('/usuarios/guardar', [UsuarioController::class, 'store']);
+Route::get('/usuarios/editar/{id}', [UsuarioController::class, 'edit']);
+Route::post('/usuarios/actualizar/{id}', [UsuarioController::class, 'update']);
 
 // Recetas
 Route::get('/recetas/formulario', [RecetaController::class, 'create']);
 Route::post('/recetas/guardar', [RecetaController::class, 'store']);
+Route::get('/recetas/editar/{id}', [RecetaController::class, 'edit']);
+Route::post('/recetas/actualizar/{id}', [RecetaController::class, 'update']);

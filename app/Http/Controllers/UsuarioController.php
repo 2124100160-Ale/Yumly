@@ -29,5 +29,29 @@ class UsuarioController extends Controller {
 public function create() {
     return view('usuarios.formulario'); // Asegúrate que el archivo exista en resources/views/usuarios/
 }
+public function edit($id) {
+    // Buscamos el registro por su ID en la base de datos
+    $usuario = \App\Models\Usuario::find($id);
+    // Pasamos el objeto a la vista 'editar'
+    return view('usuarios.editar', compact('usuario'));
 }
 
+public function update(Request $request, $id) {
+    $usuario = \App\Models\Usuario::find($id);
+    
+    $usuario->nombres = $request->nombres;
+    $usuario->apellidos = $request->apellidos;
+    $usuario->correo = $request->correo;
+    $usuario->direccion = $request->direccion;
+
+    // Lógica para la imagen
+    if ($request->hasFile('imagen')) {
+        // Guardamos la imagen en la carpeta 'public/storage'
+        $rutaImagen = $request->file('imagen')->store('usuarios', 'public');
+        $usuario->imagen = $rutaImagen;
+    }
+    
+    $usuario->save();
+    return redirect('/usuarios/listado')->with('mensaje', '¡Usuario e imagen actualizados!');
+}
+}

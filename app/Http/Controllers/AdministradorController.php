@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 class AdministradorController extends Controller {
     
+    // 1. MOSTRAR (Listado)
     public function index() {
         $administradores = Administrador::all(); 
         return view('administradores.listado', compact('administradores'));
@@ -25,7 +26,6 @@ class AdministradorController extends Controller {
         $admin->rol = $request->rol;
         $admin->estado = 1; 
 
-        // Lógica de Imagen para Crear
         if ($request->hasFile('imagen')) {
             $ruta = $request->file('imagen')->store('administradores', 'public');
             $admin->imagen = $ruta;
@@ -48,7 +48,6 @@ class AdministradorController extends Controller {
         $admin->usuario = $request->usuario;
         $admin->rol = $request->rol;
 
-        // Lógica de Imagen para Editar
         if ($request->hasFile('imagen')) {
             $ruta = $request->file('imagen')->store('administradores', 'public');
             $admin->imagen = $ruta;
@@ -57,4 +56,12 @@ class AdministradorController extends Controller {
         $admin->save();
         return redirect('/administradores/listado')->with('exito', 'Admin actualizado');
     }
-}
+
+    // 2. BORRAR (Asegúrate que esté ANTES de la última llave)
+    public function destroy($id) {
+        $admin = Administrador::find($id);
+        $admin->delete();
+        return redirect('/administradores/listado')->with('exito', 'Administrador eliminado');
+    }
+
+} // <--- Esta llave SIEMPRE debe ser la última del archivo

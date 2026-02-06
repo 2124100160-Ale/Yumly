@@ -49,11 +49,23 @@
             @endif
         </td>
         <td>
-            {{-- Botón para ir a editar --}}
-            <a href="{{ url('/administradores/editar/' . $admin->id) }}" class="btn btn-sm btn-warning">
-                <i class="fas fa-edit"></i> Editar
-            </a>
-        </td>
+    <div class="d-flex gap-2">
+        {{-- Botón para ir a editar --}}
+        <a href="{{ url('/administradores/editar/' . $admin->id) }}" class="btn btn-sm btn-warning">
+            <i class="fas fa-edit"></i> Editar
+        </a>
+
+        {{-- BOTÓN PARA BORRAR --}}
+        <form action="{{ route('administradores.destroy', $admin->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-sm btn-danger" 
+                    onclick="return confirm('¿Estás seguro de que deseas eliminar a este administrador?')">
+                <i class="fas fa-trash-alt"></i> Borrar
+            </button>
+        </form>
+    </div>
+</td>
     </tr>
     @endforeach
     </tbody>

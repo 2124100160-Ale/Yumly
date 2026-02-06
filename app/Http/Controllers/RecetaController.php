@@ -58,4 +58,20 @@ class RecetaController extends Controller {
         $receta->save();
         return redirect('/recetas/listado')->with('mensaje', '¡Receta actualizada!');
     }
+
+    public function destroy($id) {
+        // Buscamos la receta
+        $receta = Receta::find($id);
+
+        // Eliminar la imagen para no dejar basura
+        if ($receta->imagen_uno) {
+            \Storage::disk('public')->delete($receta->imagen_uno);
+        }
+
+        // Eliminamos el registro de la base de datos
+        $receta->delete();
+
+        // 4. Redireccionamos con un mensaje de éxito
+        return redirect('/recetas/listado')->with('mensaje', '¡Receta eliminada correctamente!');
+    }
 }

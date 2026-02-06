@@ -51,19 +51,21 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        {{-- Botón de Editar que lleva a tu nueva función --}}
-                        <a href="{{ url('/recetas/editar/' . $r->id) }}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i> Editar
+                    <div class="d-flex justify-content-center gap-2">
+                     {{-- Botón de Editar --}}
+                     <a href="{{ url('/recetas/editar/' . $r->id) }}" class="btn btn-sm btn-warning">
+                     <i class="fas fa-edit"></i> Editar
                         </a>
-                        
-                        {{-- Botón de Borrar (si lo necesitas) --}}
-                        <form action="{{ url('/recetas/borrar/'.$r->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Borrar receta?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+        
+                    {{-- Formulario de Borrar --}}
+                    <form action="{{ url('/recetas/borrar/'.$r->id) }}" method="POST" style="display:inline;">
+                     @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas borrar esta deliciosa receta?')">
+                        <i class="fas fa-trash"></i>
+                                  </button>
+                             </form>
+                        </div>
                     </td>
                 </tr>
             @endforeach

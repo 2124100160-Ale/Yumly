@@ -10,6 +10,7 @@ use App\Http\Controllers\IngredienteController;
 use App\Http\Controllers\TipoPlatoController;
 use App\Http\Controllers\OrigenController;
 use App\Http\Controllers\DietaController;
+use App\Http\Controllers\ServiciosController;
 
 // Pantalla Principal
 Route::get('/', function () { return view('principal'); });
@@ -37,3 +38,6 @@ Route::post('/recetas/guardar', [RecetaController::class, 'store']);
 Route::get('/recetas/editar/{id}', [RecetaController::class, 'edit']);
 Route::post('/recetas/actualizar/{id}', [RecetaController::class, 'update']);
 Route::delete('/recetas/borrar/{id}', [RecetaController::class, 'destroy'])->name('recetas.borrar');
+
+// --- SERVICIOS ---
+Route::get('/panel-informacion', [ServiciosController::class, 'mostrarPanel']);

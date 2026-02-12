@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TipoPlato extends Model
-{
-    use HasFactory;
+class TipoPlato extends Model {
+    protected $table = 'tipos_platos'; 
+    public $timestamps = false;
 }

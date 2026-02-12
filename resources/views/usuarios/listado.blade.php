@@ -1,56 +1,74 @@
 @extends('layouts.plantilla')
 
 @section('contenido')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Listado de Usuarios</h2>
-    <a href="{{ url('/usuarios/formulario') }}" class="btn btn-primary" style="background-color: #ff6600; border: none;">Añadir Nuevo</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-dark"><i class="fas fa-users"></i> Listado de Usuarios</h2>
+    <a href="{{ url('/usuarios/formulario') }}" class="btn btn-primary shadow-sm" style="background-color: #ff6600; border: none;">
+        <i class="fas fa-plus-circle"></i> Añadir Nuevo
+    </a>
 </div>
 
-<table class="table table-hover table-bordered shadow-sm text-center">
-    <thead class="table-success">
-        <tr>
-            <th>ID</th>
-            <th>Imagen</th> 
-            <th>Nombre Completo</th>
-            <th>Correo</th>
-            <th>Dirección</th>
-            <th>Acciones</th> {{-- Cambiamos Estado por Acciones --}}
-        </tr>
-    </thead>
-    <tbody>
-    @foreach($usuarios as $u)
-        <tr>
-            <td>{{ $u->id }}</td>
-            <td>
-                @if($u->imagen)
-                    <img src="{{ asset('storage/' . $u->imagen) }}" alt="Foto" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                @else
-                    <img src="{{ asset('img/default-user.png') }}" style="width: 50px; border-radius: 50%;">
-                @endif
-            </td>
-            <td class="text-start">{{ $u->nombres }} {{ $u->apellidos }}</td>
-            <td class="text-start">{{ $u->correo }}</td>
-            <td>{{ $u->direccion }}</td>
-            <td>
-                <div class="d-flex gap-1">
-                    {{-- Botón Editar --}}
-                    <a href="{{ url('/usuarios/editar/' . $u->id) }}" class="btn btn-success btn-sm fw-bold flex-fill">
-                        Editar
-                    </a>
+{{-- Alerta de éxito opcional --}}
+@if(session('exito'))
+    <div class="alert alert-success shadow-sm border-0"><i class="fas fa-check"></i> {{ session('exito') }}</div>
+@endif
 
-                    {{-- Botón Borrar --}}
-                    <form action="{{ route('usuarios.destroy', $u->id) }}" method="POST" class="flex-fill">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm fw-bold w-100" 
-                                onclick="return confirm('¿Eliminar a este usuario?')">
-                            Borrar
-                        </button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0 text-center">
+            <thead class="table-success text-dark">
+                <tr>
+                    <th class="ps-3">ID</th>
+                    <th>Imagen</th> 
+                    <th>Nombre Completo</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($usuarios as $u)
+                <tr>
+                    <td class="ps-3 fw-bold text-muted">{{ $u->id }}</td>
+                    <td>
+                        @if($u->imagen)
+                            <img src="{{ asset('storage/' . $u->imagen) }}" 
+                                 alt="Foto" 
+                                 class="rounded-circle border"
+                                 style="width: 45px; height: 45px; object-fit: cover;">
+                        @else
+                            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center border" style="width: 45px; height: 45px;">
+                                <i class="fas fa-user-tag text-secondary"></i>
+                            </div>
+                        @endif
+                    </td>
+                    <td class="text-start">
+                        <div class="fw-bold">{{ $u->nombres }} {{ $u->apellidos }}</div>
+                    </td>
+                    <td class="text-start">{{ $u->correo }}</td>
+                    <td class="text-muted small">{{ $u->direccion ?? 'Sin dirección' }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center gap-2">
+                            {{-- Botón Editar --}}
+                            <a href="{{ url('/usuarios/editar/' . $u->id) }}" class="btn btn-outline-success btn-sm shadow-sm px-3">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+
+                            {{-- Botón Borrar --}}
+                            <form action="{{ route('usuarios.destroy', $u->id) }}" method="POST" class="m-0">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger btn-sm shadow-sm px-3" 
+                                        onclick="return confirm('¿Eliminar permanentemente a {{ $u->nombres }}?')">
+                                    <i class="fas fa-trash-alt"></i> Borrar
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection

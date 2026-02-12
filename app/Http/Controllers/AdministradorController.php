@@ -3,10 +3,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Administrador; 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage; // Importante para gestionar archivos
 
 class AdministradorController extends Controller {
     
-    // 1. MOSTRAR (Listado)
     public function index() {
         $administradores = Administrador::all(); 
         return view('administradores.listado', compact('administradores'));
@@ -17,31 +17,46 @@ class AdministradorController extends Controller {
     }
 
     public function store(Request $request) {
+        // Validación: Imagen obligatoria en creación
+        $request->validate([
+            'imagen' => 'required|image|mimes:jpg,jpeg,png',
+            'nombres' => 'required',
+            'usuario' => 'required|unique:administradores,usuario'
+        ]);
+
         $admin = new Administrador();
         $admin->nombres = $request->nombres;
         $admin->apellidos = $request->apellidos;
         $admin->correo = $request->correo;
         $admin->usuario = $request->usuario;
-        $admin->contraseña = $request->contraseña;
+        $admin->contraseña = bcrypt($request->contraseña); // Seguridad básica
         $admin->rol = $request->rol;
         $admin->estado = 1; 
+        $admin->save(); // Guardamos primero para obtener el ID generado
 
+        // Renombrar imagen: administradores_id.extension
         if ($request->hasFile('imagen')) {
-            $ruta = $request->file('imagen')->store('administradores', 'public');
-            $admin->imagen = $ruta;
+            $file = $request->file('imagen');
+            $nombreArchivo = 'administradores_' . $admin->id . '.' . $file->getClientOriginalExtension();
+            
+            // Guardar con el nombre específico
+            $file->storeAs('administradores', $nombreArchivo, 'public');
+            
+            // Actualizar la ruta en la DB
+            $admin->imagen = 'administradores/' . $nombreArchivo;
+            $admin->save();
         }
 
-        $admin->save();
-        return redirect('/administradores/listado')->with('exito', 'Admin creado');
+        return redirect('/administradores/listado')->with('exito', 'Administrador creado correctamente con su imagen.');
     }
 
     public function edit($id) {
-        $administrador = Administrador::find($id);
+        $administrador = Administrador::findOrFail($id);
         return view('administradores.editar', compact('administrador'));
     }
 
     public function update(Request $request, $id) {
-        $admin = Administrador::find($id);
+        $admin = Administrador::findOrFail($id);
         $admin->nombres = $request->nombres;
         $admin->apellidos = $request->apellidos;
         $admin->correo = $request->correo;
@@ -49,19 +64,32 @@ class AdministradorController extends Controller {
         $admin->rol = $request->rol;
 
         if ($request->hasFile('imagen')) {
-            $ruta = $request->file('imagen')->store('administradores', 'public');
-            $admin->imagen = $ruta;
+            // 1. Borrar la imagen vieja del disco
+            if ($admin->imagen) {
+                Storage::disk('public')->delete($admin->imagen);
+            }
+
+            // 2. Guardar la nueva con el formato: administradores_id.extension
+            $file = $request->file('imagen');
+            $nombreArchivo = 'administradores_' . $admin->id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('administradores', $nombreArchivo, 'public');
+            
+            $admin->imagen = 'administradores/' . $nombreArchivo;
         }
 
         $admin->save();
-        return redirect('/administradores/listado')->with('exito', 'Admin actualizado');
+        return redirect('/administradores/listado')->with('exito', 'Admin actualizado correctamente.');
     }
 
-    // 2. BORRAR (Asegúrate que esté ANTES de la última llave)
     public function destroy($id) {
-        $admin = Administrador::find($id);
-        $admin->delete();
-        return redirect('/administradores/listado')->with('exito', 'Administrador eliminado');
-    }
+        $admin = Administrador::findOrFail($id);
+        
+        // Borrar la imagen física antes de eliminar el registro
+        if ($admin->imagen) {
+            Storage::disk('public')->delete($admin->imagen);
+        }
 
-} // <--- Esta llave SIEMPRE debe ser la última del archivo
+        $admin->delete();
+        return redirect('/administradores/listado')->with('exito', 'Administrador y su imagen eliminados.');
+    }
+}

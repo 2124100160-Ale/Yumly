@@ -12,17 +12,17 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Nombres</label>
-                        <input type="text" name="nombres" class="form-control" value="{{ $usuario->nombres }}">
+                        <input type="text" name="nombres" class="form-control" value="{{ $usuario->nombres }}" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Apellidos</label>
-                        <input type="text" name="apellidos" class="form-control" value="{{ $usuario->apellidos }}">
+                        <input type="text" name="apellidos" class="form-control" value="{{ $usuario->apellidos }}" required>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Correo Electrónico</label>
-                    <input type="email" name="correo" class="form-control" value="{{ $usuario->correo }}">
+                    <input type="email" name="correo" class="form-control" value="{{ $usuario->correo }}" required>
                 </div>
 
                 <div class="mb-3">
@@ -30,14 +30,26 @@
                     <input type="text" name="direccion" class="form-control" value="{{ $usuario->direccion }}">
                 </div>
 
+                {{-- SECCIÓN DE IMAGEN MODIFICADA SEGÚN LA INSTRUCCIÓN --}}
                 <div class="mb-3 p-3 border rounded bg-light">
-                    <label class="form-label fw-bold">Imagen de Perfil</label><br>
-                    <div class="d-flex align-items-center gap-3">
-                        <img src="{{ asset('storage/' . $usuario->imagen) }}" alt="Foto" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                        <div>
-                            <label class="form-label small text-muted">Subir nueva imagen (opcional)</label>
-                            <input type="file" name="imagen" class="form-control">
-                        </div>
+                    <label class="form-label fw-bold d-block mb-3">Imagen Actual</label>
+                    
+                    {{-- Mostramos la imagen actual arriba del input --}}
+                    <div class="mb-3">
+                        @if($usuario->imagen)
+                            <img src="{{ asset('storage/' . $usuario->imagen) }}" 
+                                 alt="Foto Actual" 
+                                 class="img-thumbnail"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        @else
+                            <p class="text-muted small">Sin imagen registrada</p>
+                        @endif
+                    </div>
+
+                    <div class="mt-2">
+                        <label class="form-label small text-muted fw-bold">Subir nueva imagen (opcional)</label>
+                        {{-- Sin el 'required' según la instrucción para edición --}}
+                        <input type="file" name="imagen" class="form-control" accept="image/*">
                     </div>
                 </div>
 

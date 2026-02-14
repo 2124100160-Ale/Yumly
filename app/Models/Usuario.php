@@ -2,14 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+// 1. IMPORTANTE: Agregar estas dos líneas arriba
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Usuario extends Model {
+// 2. CAMBIAR 'extends Model' por 'extends Authenticatable'
+class Usuario extends Authenticatable
+{
+    use Notifiable;
+
     protected $table = 'usuarios';
-    public $timestamps = false;
+    protected $primaryKey = 'id'; // Asegúrate que este sea tu ID real
 
-    // Relación opcional: Un usuario puede tener muchas recetas
-    public function recetas() {
-        return $this->hasMany(Receta::class, 'usuario_id');
+    protected $fillable = [
+        'nombres', 
+        'correo', 
+        'contraseña', 
+        'google_id', 
+        'imagen'
+    ];
+
+    // Si tu columna de contraseña no se llama 'password', Laravel necesita saberlo:
+    public function getAuthPassword()
+    {
+        return $this->contraseña;
     }
 }

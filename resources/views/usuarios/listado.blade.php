@@ -7,6 +7,12 @@
         <i class="fas fa-plus-circle"></i> Añadir Nuevo
     </a>
 </div>
+<div class="text-end mb-3">
+    <span class="me-2 text-muted">Sesión iniciada como: {{ Auth::user()->nombres }}</span>
+    <a href="{{ url('/logout') }}" class="btn btn-sm btn-outline-dark">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+    </a>
+</div>
 
 {{-- Alerta de éxito opcional --}}
 @if(session('exito'))
@@ -31,17 +37,25 @@
                 <tr>
                     <td class="ps-3 fw-bold text-muted">{{ $u->id }}</td>
                     <td>
-                        @if($u->imagen)
-                            <img src="{{ asset('storage/' . $u->imagen) }}" 
-                                 alt="Foto" 
-                                 class="rounded-circle border"
-                                 style="width: 45px; height: 45px; object-fit: cover;">
-                        @else
-                            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center border" style="width: 45px; height: 45px;">
-                                <i class="fas fa-user-tag text-secondary"></i>
-                            </div>
-                        @endif
-                    </td>
+    @if($u->google_id && $u->imagen)
+        {{-- Si el usuario entró por Google, mostramos el link directo --}}
+        <img src="{{ $u->imagen }}" 
+             alt="Foto Google" 
+             class="rounded-circle border"
+             style="width: 45px; height: 45px; object-fit: cover;">
+    @elseif($u->imagen)
+        {{-- Si es un usuario normal con imagen subida al servidor --}}
+        <img src="{{ asset('storage/' . $u->imagen) }}" 
+             alt="Foto Local" 
+             class="rounded-circle border"
+             style="width: 45px; height: 45px; object-fit: cover;">
+    @else
+        {{-- Si no tiene foto --}}
+        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center border" style="width: 45px; height: 45px;">
+            <i class="fas fa-user-tag text-secondary"></i>
+        </div>
+    @endif
+</td>
                     <td class="text-start">
                         <div class="fw-bold">{{ $u->nombres }} {{ $u->apellidos }}</div>
                     </td>

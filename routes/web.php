@@ -11,9 +11,15 @@ use App\Http\Controllers\TipoPlatoController;
 use App\Http\Controllers\OrigenController;
 use App\Http\Controllers\DietaController;
 use App\Http\Controllers\ServiciosController;
+use App\Http\Controllers\SocialAuthController;
 
-// Pantalla Principal
-Route::get('/', function () { return view('principal'); });
+
+Route::get('/login', function () {
+    return view('login');
+});
+Route::get('/', function () {
+    return view('principal'); // O el nombre de tu vista de bienvenida
+});
 
 // --- ADMINISTRADORES ---
 Route::get('/administradores/listado', [AdministradorController::class, 'index']);
@@ -41,3 +47,13 @@ Route::delete('/recetas/borrar/{id}', [RecetaController::class, 'destroy'])->nam
 
 // --- SERVICIOS ---
 Route::get('/panel-informacion', [ServiciosController::class, 'mostrarPanel']);
+
+
+
+Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/login'); // O a la ruta de tu login
+});

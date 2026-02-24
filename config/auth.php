@@ -36,11 +36,16 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+
+    'admin' => [
+        'driver' => 'session',
+        'provider' => 'administradores', 
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -69,6 +74,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'administradores' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Administrador::class, // Asegúrate de que esta ruta sea la correcta
+    ],
     ],
 
     /*

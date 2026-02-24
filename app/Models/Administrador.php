@@ -5,4 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 class Administrador extends Model {
     protected $table = 'administradores'; // Tu tabla real
     public $timestamps = false;
+
+    public function esMaster()
+{
+    return $this->rol === 'master';
+}
 }

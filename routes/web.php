@@ -1,59 +1,68 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-// Importar todos los controladores
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\RecetaController;
-use App\Http\Controllers\IngredienteController;
-use App\Http\Controllers\TipoPlatoController;
-use App\Http\Controllers\OrigenController;
-use App\Http\Controllers\DietaController;
 use App\Http\Controllers\ServiciosController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\LoginController;
 
-
-Route::get('/login', function () {
-    return view('login');
-});
+// RUTA PÚBLICA (Cualquiera puede verla)
 Route::get('/', function () {
-    return view('principal'); // O el nombre de tu vista de bienvenida
+    return view('principal');
 });
 
-// --- ADMINISTRADORES ---
-Route::get('/administradores/listado', [AdministradorController::class, 'index']);
-Route::get('/administradores/formulario', [AdministradorController::class, 'create']);
-Route::post('/administradores/guardar', [AdministradorController::class, 'store']);
-Route::get('/administradores/editar/{id}', [AdministradorController::class, 'edit']);
-Route::post('/administradores/actualizar/{id}', [AdministradorController::class, 'update']);
-Route::delete('/administradores/borrar/{id}', [AdministradorController::class, 'destroy'])->name('administradores.destroy');
+// RUTAS DE AUTENTICACIÓN (Entradas al sistema)
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// --- USUARIOS ---
-Route::get('/usuarios/listado', [UsuarioController::class, 'index']);
-Route::get('/usuarios/formulario', [UsuarioController::class, 'create']);
-Route::post('/usuarios/guardar', [UsuarioController::class, 'store']);
-Route::get('/usuarios/editar/{id}', [UsuarioController::class, 'edit']);
-Route::post('/usuarios/actualizar/{id}', [UsuarioController::class, 'update']);
-Route::delete('/usuarios/borrar/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
-
-// --- RECETAS ---
-Route::get('/recetas/listado', [RecetaController::class, 'index']);
-Route::get('/recetas/formulario', [RecetaController::class, 'create']);
-Route::post('/recetas/guardar', [RecetaController::class, 'store']);
-Route::get('/recetas/editar/{id}', [RecetaController::class, 'edit']);
-Route::post('/recetas/actualizar/{id}', [RecetaController::class, 'update']);
-Route::delete('/recetas/borrar/{id}', [RecetaController::class, 'destroy'])->name('recetas.borrar');
-
-// --- SERVICIOS ---
-Route::get('/panel-informacion', [ServiciosController::class, 'mostrarPanel']);
-
-
-
+// RUTAS DE GOOGLE (Socialite)
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
-Route::get('/logout', function () {
-    Auth::logout();
-    return redirect('/login'); // O a la ruta de tu login
+
+// GRUPO PROTEGIDO (Solo usuarios logueados)
+Route::middleware(['auth'])->group(function () {
+    
+    // Panel principal
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    });
+
+    // --- ADMINISTRADORES ---
+    Route::prefix('administradores')->group(function () {
+        Route::get('/listado', [AdministradorController::class, 'index']);
+        Route::get('/formulario', [AdministradorController::class, 'create']);
+        Route::post('/guardar', [AdministradorController::class, 'store']);
+        Route::get('/editar/{id}', [AdministradorController::class, 'edit']);
+        Route::post('/actualizar/{id}', [AdministradorController::class, 'update']);
+        Route::delete('/borrar/{id}', [AdministradorController::class, 'destroy'])->name('administradores.destroy');
+    });
+
+    // --- USUARIOS ---
+    Route::prefix('usuarios')->group(function () {
+        Route::get('/listado', [UsuarioController::class, 'index']);
+        Route::get('/formulario', [UsuarioController::class, 'create']);
+        Route::post('/guardar', [UsuarioController::class, 'store']);
+        Route::get('/editar/{id}', [UsuarioController::class, 'edit']);
+        Route::post('/actualizar/{id}', [UsuarioController::class, 'update']);
+        Route::delete('/borrar/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+    });
+
+    // --- RECETAS ---
+    Route::prefix('recetas')->group(function () {
+        Route::get('/listado', [RecetaController::class, 'index']);
+        Route::get('/formulario', [RecetaController::class, 'create']);
+        Route::post('/guardar', [RecetaController::class, 'store']);
+        Route::get('/editar/{id}', [RecetaController::class, 'edit']);
+        Route::post('/actualizar/{id}', [RecetaController::class, 'update']);
+        Route::delete('/borrar/{id}', [RecetaController::class, 'destroy'])->name('recetas.borrar');
+    });
+
+    // --- SERVICIOS ---
+    Route::get('/panel-informacion', [ServiciosController::class, 'mostrarPanel']);
+
 });

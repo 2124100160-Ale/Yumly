@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,33 +12,43 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'usuarios'; 
+
+    // Desactivamos los timestamps porque tu tabla no tiene created_at/updated_at
+    public $timestamps = false; 
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'nombres',   
+        'apellidos', // Agregado
+        'correo',
+        'contraseña',
+        'direccion',
+        'imagen',
+        'estado',
+        'google_id',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
-        'password',
+        'contraseña',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
+
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'correo_verified_at' => 'datetime',
+        'contraseña' => 'hashed', // Importante en Laravel 10 para el cifrado automático
     ];
+    
+    public function getAuthPassword()
+{
+    return $this->contraseña;
+}
+// Dentro de app/Models/User.php
+
+public function username()
+{
+    return 'correo'; 
+}
+
+
 }

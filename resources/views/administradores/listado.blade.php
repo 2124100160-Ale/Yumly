@@ -66,13 +66,15 @@
             <i class="fas fa-edit"></i> <span class="d-none d-md-inline">Editar</span>
         </a>
 
-        <form action="{{ url('/administradores/borrar/'.$admin->id) }}" method="POST" class="d-inline">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-sm btn-danger shadow-sm px-3" onclick="return confirm('¿Seguro que deseas borrar?')">
-                <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Borrar</span>
-            </button>
-        </form>
+     
+@if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->esMaster())            <form action="{{ url('/administradores/borrar/'.$admin->id) }}" method="POST" class="d-inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger shadow-sm px-3" onclick="return confirm('¿Seguro que deseas borrar?')">
+                    <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Borrar</span>
+                </button>
+            </form>
+        @endif
     </div>
 </td>
         </tr>
